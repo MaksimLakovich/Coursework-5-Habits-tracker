@@ -27,8 +27,8 @@ INSTALLED_APPS = [
     # 'phonenumber_field',
 
     # Приложения проекта
-    # 'users',
-    # 'lms_system',
+    'users',
+    'habits',
 ]
 
 MIDDLEWARE = [
