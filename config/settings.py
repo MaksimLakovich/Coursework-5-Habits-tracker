@@ -22,9 +22,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # # Добавляем это чтобы библиотека https://django-phonenumber-field.readthedocs.io/en/stable/index.html
-    # # использовала локализованные ошибки валидации номеров в поле PhoneNumberField
-    # 'phonenumber_field',
+    # Добавляем это чтобы библиотека https://django-phonenumber-field.readthedocs.io/en/stable/index.html
+    # использовала локализованные ошибки валидации номеров в поле PhoneNumberField
+    'phonenumber_field',
+
+    # DRF (Django REST framework) - это библиотека, которая работает со стандартными моделями Django для создания
+    # гибкого и мощного API-сервера для проекта.
+    'rest_framework',
 
     # Приложения проекта
     'users',
@@ -104,4 +108,4 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'users.AppUser'
