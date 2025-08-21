@@ -99,7 +99,12 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 ## _Приложение "Users" (users/views.py):_
 
-1) Класс-контроллер `` - ...
+1) Класс-контроллер `UserViewSetAPIView(viewsets.ViewSet)` - для создания, просмотра и редактирования пользователя в приложении:
+   - на основе ***viewsets***.
+   - методы:
+     - `create(self, request)`: создание/регистрация нового пользователя в приложении (***POST***, ***status=201***).
+     - `retrieve(self, request, pk=None)`: получение данных одного пользователя по ID (***GET***, ***status=200***).
+     - `partial_update(self, request, pk=None)`: частичное обновление пользователя по ID (***PATCH***, ***status=200***).
 
 ## _Приложение "Habits" (habits/views.py):_
 
