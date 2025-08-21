@@ -18,6 +18,10 @@ class AppUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AppUser
+        # # Лучше не использовать fields = "__all__" потому что с "__all__" наш API отдаст все поля,
+        # # включая is_staff, is_superuser, groups и т.п. Это опасно, потому что через API можно будет
+        # # назначить себе суперправа.
+        # fields = ("id", "email", "first_name", "last_name", "phone_number", "city", "avatar", "password")
         fields = "__all__"
         # extra_kwargs - это зарезервированное имя в Meta-классе ModelSerializer для настройки конкретных полей,
         # например, ниже указываю что пароль только на ЗАПИСЬ. Т.е. его можно отправить через POST/PUT/PATCH,

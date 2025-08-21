@@ -28,3 +28,9 @@ black = "^25.1.0"
 isort = "^6.0.1"
 mypy = "^1.17.1"
 
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.17.1"
+django-stubs = "^5.2.2"
+djangorestframework-stubs = "^3.16.2"
+

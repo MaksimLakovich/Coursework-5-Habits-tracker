@@ -8,6 +8,10 @@ class AppUserManager(BaseUserManager):
         """Создает и возвращает обычного пользователя."""
         if not email:
             raise ValueError("Email обязателен для создания пользователя")
+
+        if not password:
+            raise ValueError("Пароль обязателен для создания пользователя")
+
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
