@@ -120,6 +120,10 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 ## _Приложение "Users" (users/permissions.py):_
 
+1) Класс `IsSelf(BasePermission)` - кастомный permission-класс, который разрешает доступ только владельцу своего профиля.
+
+## _Приложение "Habits" (habits/permissions.py):_
+
 1) Класс `` - кастомный permission-класс...
 
 
