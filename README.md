@@ -7,19 +7,20 @@
 [4. Сериализация](#title4) / 
 [5. Валидация](#title5) / 
 [6. Контроллеры](#title6) / 
-[7. Права доступов](#title7) / 
-[8. Пагинация](#title8) / 
-[9. Интеграция с платежной системой (сервисные функции)](#title9) / 
-[10. Вспомогательные функции](#title10) / 
-[11. Сигналы](#title11) / 
-[12. Отложенные задачи](#title12) / 
-[13. Загрузка тестовых данных](#title13) / 
-[14. Тестирование приложения](#title14) /
-[15. Установка проекта](#title15) / 
-[16. Получение ключей .env](#title16) / 
-[17. Описание файла .flake8](#title17) / 
-[18. Описание файла mypy.ini](#title18) / 
-[19. Документация к API](#title19) / 
+[7. Маршруты](#title7) / 
+[8. Права доступов](#title8) / 
+[9. Пагинация](#title9) / 
+[10. Интеграция с платежной системой (сервисные функции)](#title10) / 
+[11. Вспомогательные функции](#title11) / 
+[12. Сигналы](#title12) / 
+[13. Отложенные задачи](#title13) / 
+[14. Загрузка тестовых данных](#title14) / 
+[15. Тестирование приложения](#title15) /
+[16. Установка проекта](#title16) / 
+[17. Получение ключей .env](#title17) / 
+[18. Описание файла .flake8](#title18) / 
+[19. Описание файла mypy.ini](#title19) / 
+[20. Документация к API](#title20) / 
 
 
 
@@ -105,9 +106,20 @@ Backend-часть SPA веб-приложения (трекер полезны�
 1) Класс-контроллер `UserViewSetAPIView(viewsets.ViewSet)` - для создания, просмотра и редактирования пользователя в приложении:
    - на основе ***viewsets***.
    - методы:
-     - `create(self, request)`: создание/регистрация нового пользователя в приложении (***POST***, ***status=201***).
-     - `retrieve(self, request, pk=None)`: получение данных одного пользователя по ID (***GET***, ***status=200***).
-     - `partial_update(self, request, pk=None)`: частичное обновление пользователя по ID (***PATCH***, ***status=200***).
+     - `get_permissions(self)`: определяет права доступа в зависимости от действия:
+       - create;
+       - retrieve;
+       - partial_update;
+       - user_set_password.
+     - `get_object(self)`: возвращает объект пользователя по pk и запускает объектные permissions (без этого не запустится во **viewsets.ViewSet** кастомный пермишен ***IsSelf***).
+     - `create(self, request)`: создает/регистрирует нового пользователя в приложении (***POST***, ***status=201***).
+     - `retrieve(self, request, pk=None)`: получает данные одного пользователя по ID (доступно только владельцу профиля) (***GET***, ***status=200***).
+     - `partial_update(self, request, pk=None)`: частично обновляет пользователя по ID (доступно только владельцу профиля) (***PATCH***, ***status=200***).
+     - `user_set_password(self, request, pk=None)`: смена пароля текущего пользователя (***POST***, ***status=200***).
+
+2) class UserTokenObtainPairView(TokenObtainPairView):
+    """Класс-контроллер на основе TokenObtainPairView для авторизации по email."""
+
 
 ## _Приложение "Habits" (habits/views.py):_
 
@@ -116,7 +128,29 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 
 
-# <a id="title7">7. Описание прав доступов (permissions)</a>
+# <a id="title7"7. Описание маршрутов (urls)</a>
+
+## _Приложение "Users" (users/urls.py):_
+
+```python
+urlpatterns = [
+    path("login/", UserTokenObtainPairView.as_view(), name="login"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("register/", UserViewSetAPIView.as_view({"post": "create"}), name="user-register"),
+    path("users/<int:pk>/", UserViewSetAPIView.as_view({"get": "retrieve"}), name="user-detail"),
+    path("users/<int:pk>/update/", UserViewSetAPIView.as_view({"patch": "partial_update"}), name="user-update"),
+    path("users/<int:pk>/set_password/", UserViewSetAPIView.as_view({"post": "user_set_password"}), name="user-set-password"),
+]
+```
+
+## _Приложение "Habits" (habits/urls.py):_
+
+1) `` - ...
+
+
+
+
+# <a id="title8">8. Описание прав доступов (permissions)</a>
 
 ## _Приложение "Users" (users/permissions.py):_
 
@@ -129,7 +163,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 
 
-# <a id="title8">8. Описание пагинации (paginators)</a>
+# <a id="title9">9. Описание пагинации (paginators)</a>
 
 ## _Приложение "Habits" (habits/paginators.py):_
 
@@ -138,7 +172,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 
 
-# <a id="title9">9. Интеграция. Описание сервисных функций (services)</a>
+# <a id="title10">10. Интеграция. Описание сервисных функций (services)</a>
 
 ## _Приложение "Users" (users/services.py):_
 
@@ -151,7 +185,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 
 
-# <a id="title10">10. Вспомогательные функции</a>
+# <a id="title11">11. Вспомогательные функции</a>
 
 ## _Приложение "Users" (users/managers.py):_
 
@@ -162,7 +196,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 
 
-# <a id="title11">11. Сигналы</a>
+# <a id="title12">12. Сигналы</a>
 
 ## _Приложение "Habits" (habits/signals.py):_
 
@@ -171,7 +205,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 
 
-# <a id="title12">12. Отложенные задачи</a>
+# <a id="title13">13. Отложенные задачи</a>
 
 ## _Приложение "Users" (users/tasks.py):_
 
@@ -184,7 +218,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 
 
-# <a id="title13">13. Загрузка тестовых данных</a>
+# <a id="title14">14. Загрузка тестовых данных</a>
 
 ## _Директория проекта для различных данных (data/fixtures):_
 1. Файл `.json` - фикстура с тестовыми данными для ...
@@ -199,7 +233,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 
 
-# <a id="title14">14. Тестирование приложения</a>
+# <a id="title15">15. Тестирование приложения</a>
 
 ## _Приложение "Habits" (habits/tests.py):_
 
@@ -216,7 +250,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 
 
-# <a id="title15">15. Установка проекта</a>
+# <a id="title16">16. Установка проекта</a>
 1. Клонируйте репозиторий:
    ```
    git clone https://github.com/MaksimLakovich/Coursework-5-Habits-tracker.git
@@ -230,7 +264,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 
 
-# <a id="title16">16. Получение ключей. Описание файла .env.example</a> 
+# <a id="title17">17. Получение ключей. Описание файла .env.example</a> 
 1. Создайте файл .env в корне проекта из копии подготовленного файла `.env.example`, в котором описаны названия всех переменных, необходимых для работы приложения.
 2. Замените значения переменных реальными данными.
 3. В модуле `settings.py` существует секретный ключ `SECRET_KEY`, который рекомендуется в целях безопасности хранить в тайне:
@@ -254,7 +288,7 @@ DATABASE_PORT=
 
 
 
-# <a id="title17">17. Описание файла .flake8</a> 
+# <a id="title18">18. Описание файла .flake8</a> 
 ```angelscript
 [flake8]
 max-line-length = 119
@@ -265,7 +299,7 @@ exclude = .git, __pycache__, venv, .venv
 
 
 
-# <a id="title18">18. Описание файла mypy.ini</a> 
+# <a id="title19">19. Описание файла mypy.ini</a> 
 ```ini
 # Настроил mypy для Django, указав путь к settings.py.
 # Это нужно было чтоб убрать ошибки проверки mypy
@@ -289,6 +323,6 @@ ignore_missing_imports = True
 
 
 
-# <a id="title19">19. Документация к API</a> 
+# <a id="title20">20. Документация к API</a> 
 1. ***Swagger UI*** по адресу: http://127.0.0.1:8000/swagger/
 2. ***Redoc*** по адресу: http://127.0.0.1:8000/redoc/
