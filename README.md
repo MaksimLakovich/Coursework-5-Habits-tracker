@@ -78,6 +78,9 @@ Backend-часть SPA веб-приложения (трекер полезны�
         "password": {"write_only": True},
      }
      ```
+2) `UserObtainPairSerializer(TokenObtainPairSerializer)` - класс-сериализатор токена наследующийся от **TokenObtainPairSerializer** для входа/авторизации по email.
+    - Кастомизация сериализатора:
+      - `validate(self, attrs)` - валидация данных при получении токена: проверка существования пользователя и корректности пароля.
 
 ## _Приложение "Habits" (habits/serializers.py):_
 
