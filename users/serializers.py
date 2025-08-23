@@ -11,12 +11,21 @@ class AppUserSerializer(serializers.ModelSerializer):
     десериализации."""
 
     def create(self, validated_data):
-        """Переопределяем создание пользователя, чтобы пароль сохранялся БД в хэшированном виде."""
+        """Переопределяет создание пользователя, чтобы пароль сохранялся БД в хэшированном виде."""
         password = validated_data.pop("password")
         user = AppUser(**validated_data)
         user.set_password(password)
         user.save()
         return user
+
+    def update(self, obj, validated_data):
+        """Полностью блокирует password в методе update, чтоб пароль менялся только через реализованный
+        специально для этого метод user_set_password с хешированием."""
+        if "password" in validated_data:
+            raise serializers.ValidationError(
+                {"password": "Пароль нельзя изменять через update. Используйте существующий метод смены пароля."}
+            )
+        return super().update(obj, validated_data)
 
     class Meta:
         model = AppUser
