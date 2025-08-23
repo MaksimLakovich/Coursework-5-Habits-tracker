@@ -98,5 +98,5 @@ class UserViewSetAPIView(viewsets.ViewSet):
 class UserTokenObtainPairView(TokenObtainPairView):
     """Класс-контроллер на основе TokenObtainPairView для авторизации по email."""
 
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny]  # type: ignore[assignment]
     serializer_class = UserObtainPairSerializer
