@@ -28,11 +28,9 @@ class HabitsAdmin(admin.ModelAdmin):
         "is_public",
     )
     search_fields = (
-        "owner",
+        "owner__email",
         "location",
         "time",
         "description",
-        "is_pleasant",
-        "is_public",
     )
     ordering = ("owner", "description",)

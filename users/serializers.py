@@ -6,8 +6,8 @@ from users.models import AppUser
 
 
 class AppUserSerializer(serializers.ModelSerializer):
-    """Класс-сериализатор с использованием класса ModelSerializer для осуществления базовой сериализация в DRF на
-    основе модели AppUser. Описывает то, какие поля модели AppUser будут участвовать в сериализации и
+    """Класс-сериализатор с использованием класса *ModelSerializer* для осуществления базовой сериализация в DRF на
+    основе модели *AppUser*. Описывает то, какие поля модели *AppUser* будут участвовать в сериализации и
     десериализации."""
 
     def create(self, validated_data):
@@ -19,8 +19,8 @@ class AppUserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, obj, validated_data):
-        """Полностью блокирует password в методе update, чтоб пароль менялся только через реализованный
-        специально для этого метод user_set_password с хешированием."""
+        """Полностью блокирует password в методе *update*, чтоб пароль менялся только через реализованный
+        специально для этого метод *user_set_password* с хешированием."""
         if "password" in validated_data:
             raise serializers.ValidationError(
                 {"password": "Пароль нельзя изменять через update. Используйте существующий метод смены пароля."}
@@ -43,7 +43,7 @@ class AppUserSerializer(serializers.ModelSerializer):
 
 
 class UserObtainPairSerializer(TokenObtainPairSerializer):
-    """Кастомный класс-сериализатор токена наследующийся от TokenObtainPairSerializer, позволяющий вход по email."""
+    """Кастомный класс-сериализатор токена наследующийся от *TokenObtainPairSerializer*, позволяющий вход по email."""
 
     # ВАЖНО! Необходимо указать, что username_field - это будет email.
     # До это мы указывали в модели это "USERNAME_FIELD = "email"" но это настройка Django, например, в админке,
