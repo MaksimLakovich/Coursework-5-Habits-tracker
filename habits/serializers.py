@@ -8,10 +8,15 @@ class HabitsSerializer(serializers.ModelSerializer):
     основе модели *Habits*. Описывает то, какие поля модели *Habits* будут участвовать в сериализации и десериализации.
     """
 
+    MIN_TIME = 1
+    MAX_TIME = 120
+
     def validate_time_to_complete(self, value):
-        """Кастомная валидация поля *time_to_complete*: привычка должна выполняться не дольше 120 секунд."""
-        if value and value > 120:
-            raise serializers.ValidationError("Время выполнения должно быть не больше 120 секунд.")
+        """Кастомная валидация поля *time_to_complete*: привычка должна выполняться в допустимом диапазоне."""
+        if not (self.MIN_TIME <= value <= self.MAX_TIME):
+            raise serializers.ValidationError(
+                f"Время выполнения должно быть от {self.MIN_TIME} до {self.MAX_TIME} секунд."
+            )
         return value
 
     class Meta:
