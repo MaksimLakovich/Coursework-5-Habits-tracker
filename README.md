@@ -179,7 +179,7 @@ urlpatterns = [
 
 ## _Приложение "Habits" (habits/permissions.py):_
 
-1) Класс `` - кастомный permission-класс...
+1) Класс `IsOwner(BasePermission)` - кастомный permission-класс, который проверяет, является ли пользователь владельцем (owner) объекта.
 
 
 
