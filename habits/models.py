@@ -85,8 +85,7 @@ class Habits(TimeStampedModel):
         help_text="Чем пользователь должен себя вознаградить после выполнения",
     )
     time_to_complete = models.PositiveSmallIntegerField(
-        null=True,
-        blank=True,
+        null=False,
         verbose_name="Время на выполнение:",
         help_text="Время, которое предположительно потратит пользователь на выполнение привычки (в секундах)",
     )
