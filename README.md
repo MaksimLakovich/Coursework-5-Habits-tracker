@@ -138,13 +138,30 @@ Backend-часть SPA веб-приложения (трекер полезны�
      - `partial_update(self, request, pk=None)`: частично обновляет пользователя по ID (доступно только владельцу профиля) (***PATCH***, ***status=200***).
      - `user_set_password(self, request, pk=None)`: смена пароля текущего пользователя (***POST***, ***status=200***).
 
-2) class UserTokenObtainPairView(TokenObtainPairView):
-    """Класс-контроллер на основе TokenObtainPairView для авторизации по email."""
-
+2) Класс-контроллер `UserTokenObtainPairView(TokenObtainPairView)` - класс-контроллер на основе TokenObtainPairView для возможности авторизации по email, так как я убрал username, которое было по умолчанию в DRF.
+   - на основе ***TokenObtainPairView*** - базовый класс для получения JWT-токена.
 
 ## _Приложение "Habits" (habits/views.py):_
 
-1) Класс-контроллер `` - ...
+1) Класс-контроллер `HabitsCreateAPIView(generics.CreateAPIView)` - для создания новой привычки в приложении:
+   - на основе ***generics***.
+   - методы:
+     - `perform_create(self, serializer)`: присваивает текущего авторизованного пользователя как владельца (owner) создаваемого объекта.
+
+2) Класс-контроллер `UserHabitsListAPIView(generics.ListAPIView)` - для получения списка привычек текущего пользователя:
+   - на основе ***generics***.
+   - методы:
+     - `get_queryset(self)`: получение набора данных, который будет использоваться во View.
+
+3) Класс-контроллер `PublicHabitsListAPIView(generics.ListAPIView)` - для получения списка публичных привычек:
+   - на основе ***generics***.
+   - методы:
+     - `get_queryset(self)`: получение набора данных, который будет использоваться во View.
+
+4) Класс-контроллер `HabitsRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)` - для просмотра, обновления и удаления конкретной привычки:
+   - на основе ***generics***.
+   - валидация:
+     - `permission_classes = [IsOwner]`: пользователь имеет доступ только к своим привычкам по механизму CRUD
 
 
 
@@ -166,7 +183,14 @@ urlpatterns = [
 
 ## _Приложение "Habits" (habits/urls.py):_
 
-1) `` - ...
+```python
+urlpatterns = [
+    path("habits/", HabitsCreateAPIView.as_view(), name="habit-create"),
+    path("habits/user/", UserHabitsListAPIView.as_view(), name="habits-user-list"),
+    path("habits/public/", PublicHabitsListAPIView.as_view(), name="habits-public-list"),
+    path("habits/<int:pk>/", HabitsRetrieveUpdateDestroyAPIView.as_view(), name="habit-detail"),
+]
+```
 
 
 
