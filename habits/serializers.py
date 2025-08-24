@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from habits.models import Habits
+from habits.validators import HabitRewardChoiceValidator
 
 
 class HabitsSerializer(serializers.ModelSerializer):
@@ -22,5 +23,7 @@ class HabitsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Habits
         fields = "__all__"
-        # validators = ...
+        validators = [
+            HabitRewardChoiceValidator(),
+        ]
         read_only_fields = ("created_at", "updated_at",)
