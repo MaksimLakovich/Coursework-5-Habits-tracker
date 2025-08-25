@@ -167,11 +167,15 @@ Backend-часть SPA веб-приложения (трекер полезны�
    - на основе ***generics***.
    - методы:
      - `get_queryset(self)`: получение набора данных, который будет использоваться во View.
+   - пагинация страницы:
+     - `pagination_class = UserHabitsListPagination`
 
 3) Класс-контроллер `PublicHabitsListAPIView(generics.ListAPIView)` - для получения списка публичных привычек:
    - на основе ***generics***.
    - методы:
      - `get_queryset(self)`: получение набора данных, который будет использоваться во View.
+   - пагинация страницы:
+     - `pagination_class = PublicHabitsListPagination`
 
 4) Класс-контроллер `HabitsRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)` - для просмотра, обновления и удаления конкретной привычки:
    - на основе ***generics***.
@@ -227,7 +231,9 @@ urlpatterns = [
 
 ## _Приложение "Habits" (habits/paginators.py):_
 
-1) Класс `` - общий пагинатор для ...
+1) Класс `BaseHabitsListPagination(PageNumberPagination)` - базовый класс с общими настройками пагинации для страниц со списками от которого буду потом наследоваться в:
+   - `UserHabitsListPagination(BaseHabitsListPagination)`: вывод по 5 привычек на странице ***/habits/user/***.
+   - `PublicHabitsListPagination(BaseHabitsListPagination)`: вывод по 10 привычек на странице ***/habits/public/***.
 
 
 

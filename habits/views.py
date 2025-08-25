@@ -1,6 +1,8 @@
 from rest_framework import generics
 
 from habits.models import Habits
+from habits.paginators import (PublicHabitsListPagination,
+                               UserHabitsListPagination)
 from habits.permissions import IsOwner
 from habits.serializers import HabitsSerializer
 
@@ -19,6 +21,7 @@ class UserHabitsListAPIView(generics.ListAPIView):
     """Класс-контроллер на основе базового Generic-класса для получения списка привычек текущего пользователя."""
 
     serializer_class = HabitsSerializer
+    pagination_class = UserHabitsListPagination
 
     def get_queryset(self):
         """Получение набора данных, который будет использоваться во View."""
@@ -29,6 +32,7 @@ class PublicHabitsListAPIView(generics.ListAPIView):
     """Класс-контроллер на основе базового Generic-класса для получения списка публичных привычек."""
 
     serializer_class = HabitsSerializer
+    pagination_class = PublicHabitsListPagination
 
     def get_queryset(self):
         """Получение набора данных, который будет использоваться во View."""
