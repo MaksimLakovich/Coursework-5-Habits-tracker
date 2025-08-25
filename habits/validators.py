@@ -23,3 +23,27 @@ class HabitRewardChoiceValidator:
             )
 
         return attrs
+
+
+class RelatedHabitPleasantValidator:
+    """Класс-валидатор для проверки: что в связанные привычки могут попадать только привычки с признаком приятной."""
+
+    def __call__(self, attrs):
+        """Метод __call__() делает экземпляр класса вызываемым, как функцию.
+        Используется в DRF как валидатор поля сериализатора."""
+        related_pleasant_habit = attrs.get("related_pleasant_habit")
+
+        if related_pleasant_habit and not related_pleasant_habit.is_pleasant:
+            raise serializers.ValidationError(
+                "В связанные привычки могут попадать только привычки с признаком приятной."
+            )
+
+        return attrs
+
+
+
+"""
+5.4. PleasantHabitRestrictionsValidator - У приятной привычки не может быть вознаграждения или связанной привычки. 
+
+5.4. У приятной привычки не может быть вознаграждения или связанной привычки.
+"""

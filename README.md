@@ -110,7 +110,8 @@ Backend-часть SPA веб-приложения (трекер полезны�
        - `validate_time_to_complete(self, value)` - кастомная валидация поля *time_to_complete*, что привычка должна выполняться в допустимом (заданном) диапазоне.
        - `validate_periodicity(self, value)` - кастомная валидация поля *periodicity*: привычка должна выполняться хотя бы 1 раз в 7 дней.
      - Подключенные сторонние кастомные валидаторы:
-       - `HabitRewardChoiceValidator()`
+       - `HabitRewardChoiceValidator`
+       - `RelatedHabitPleasantValidator`
 
 
 
@@ -119,9 +120,11 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 ## _Приложение ""Habits" (habits/validators.py):_
 
-1) Класс-валидатор `HabitRewardChoiceValidator()` - для проверки:
+1) Класс-валидатор `HabitRewardChoiceValidator` - для проверки:
    - нельзя одновременно указать связанную привычки и вознаграждение;
    - должно быть указано хотя бы одно из двух полей.
+
+2) Класс-валидатор `RelatedHabitPleasantValidator` - для проверки, что в связанные привычки могут попадать только привычки с признаком приятной.
 
 
 
