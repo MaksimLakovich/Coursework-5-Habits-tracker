@@ -259,13 +259,11 @@ urlpatterns = [
 
 # <a id="title10">10. Интеграция. Описание сервисных функций (services)</a>
 
-## _Приложение "Users" (users/services.py):_
+## _Приложение "Telegram_bot" (telegram_bot/services.py):_
 
-1) ...
-
-## _Приложение "Habits" (habits/services.py):_
-
-1) ...
+1) Функция `send_telegram_message(chat_id, message)` - - сервисная функция для отправки сообщения пользователю в Telegram:
+   - ***:param chat_id***: Telegram ChatID пользователя.
+   - ***:param message***: Текст сообщения в Telegram.
 
 
 
@@ -292,13 +290,11 @@ urlpatterns = [
 
 # <a id="title13">13. Отложенные задачи</a>
 
-## _Приложение "Users" (users/tasks.py):_
+## _Приложение "Telegram_bot" (telegram_bot/tasks.py):_
 
-1) Периодическая задача `` - ...
-
-## _Приложение "Habits" (habits/tasks.py):_
-
-1) Отложенная задача `` - ...
+1) Отложенная задача `task_send_reminding_message(self, habit_id)` - напоминает пользователю о необходимости выполнения полезной привычки:
+   - ***:param habit_id*** - ID привычки, для которой нужно отправить напоминание.
+   - ***@shared_task(bind=True, max_retries=3)*** - устанавливает количество попыток отправки, если предыдущая отправка не сработала.
 
 
 
@@ -375,6 +371,9 @@ DATABASE_PORT=
 CELERY_BROKER_URL=
 # 2) URL-адрес брокера результатов - хранилище результатов выполнения задаx (использую тот же Redis)
 CELERY_RESULT_BACKEND=
+
+# Настройки для Telegram-бота (токен)
+TELEGRAM_BOT_TOKEN=
 ```
 
 
