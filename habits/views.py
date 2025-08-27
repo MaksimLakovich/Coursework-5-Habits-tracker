@@ -5,6 +5,7 @@ from habits.paginators import (PublicHabitsListPagination,
                                UserHabitsListPagination)
 from habits.permissions import IsOwner
 from habits.serializers import HabitsSerializer
+from telegram_bot.tasks import task_send_reminding_message
 
 
 class HabitsCreateAPIView(generics.CreateAPIView):
@@ -13,8 +14,19 @@ class HabitsCreateAPIView(generics.CreateAPIView):
     serializer_class = HabitsSerializer
 
     def perform_create(self, serializer):
-        """Присваивает текущего авторизованного пользователя как владельца (owner) создаваемого объекта."""
+        """1) Присваивает текущего авторизованного пользователя как владельца (owner) создаваемого объекта.
+        2) Запускает отложенную задачу по отправке напоминания о необходимости выполнения полезной привычки."""
+        # 1) Установка владельца
         serializer.save(owner=self.request.user)
+        # 2) Отложенная celery-задача
+        habit = serializer.save()
+        # # ВАРИАНТ 1: delay() - это постой вариант для вызова отложенной celery-задачи
+        # task_send_reminding_message(habit.pk)
+        # ВАРИАНТ 2: apply_async() - это вариант запуска отложенной celery-задачи с задержкой
+        task_send_reminding_message.apply_async(
+            args=[habit.pk],
+            countdown=60 * 20 * 1  # 20 минут
+        )
 
 
 class UserHabitsListAPIView(generics.ListAPIView):
@@ -46,3 +58,14 @@ class HabitsRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Habits.objects.all()
     serializer_class = HabitsSerializer
     permission_classes = [IsOwner]
+
+    def perform_update(self, serializer):
+        """Запускает отложенную задачу по отправке напоминания о необходимости выполнения полезной привычки."""
+        habit = serializer.save()
+        # # ВАРИАНТ 1: delay() - это постой вариант для вызова отложенной celery-задачи
+        # task_send_reminding_message(habit.pk)
+        # ВАРИАНТ 2: apply_async() - это вариант запуска отложенной celery-задачи с задержкой
+        task_send_reminding_message.apply_async(
+            args=[habit.pk],
+            countdown=60 * 20 * 1  # 20 минут
+        )
