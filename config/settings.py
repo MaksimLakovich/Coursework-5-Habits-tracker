@@ -2,6 +2,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 # Загрузка переменных из .env-файла
@@ -30,6 +31,9 @@ INSTALLED_APPS = [
     # DRF (Django REST framework) - это библиотека, которая работает со стандартными моделями Django для создания
     # гибкого и мощного API-сервера для проекта.
     'rest_framework',
+
+    # Добавление пакета celery-beat
+    'django_celery_beat',
 
     # Приложения проекта
     'users',
@@ -145,3 +149,11 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 # Настройки для Telegram-бота (отправка напоминаний)
 TELEGRAM_API_URL = 'https://api.telegram.org/bot'
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+
+# Настройка расписания запуска периодической задачи через Celery-beat
+CELERY_BEAT_SCHEDULE = {
+    'task-send-daily-message': {
+        'task': 'telegram_bot.tasks.task_send_daily_message',
+        'schedule': crontab(hour=9, minute=00),  # каждый день в 9:00
+    },
+}

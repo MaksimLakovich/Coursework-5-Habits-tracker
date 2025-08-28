@@ -15,6 +15,7 @@ def task_send_reminding_message(self, habit_id):
     """Напоминание о необходимости выполнения полезной привычки. Учитывается периодичность выполнения привычки.
     :param habit_id: ID привычки, для которой нужно отправить напоминание.
     """
+
     habit = Habits.objects.get(id=habit_id)
     # Если место в привычке не указано пользователем, то использую это по умолчанию
     location = habit.location or "место не указано"
@@ -60,3 +61,30 @@ def task_send_reminding_message(self, habit_id):
     except Exception as e:
         # Повтор через 120 секунд, максимум 3 попытки согласно "max_retries=3"
         raise self.retry(exc=e, countdown=120)
+
+
+@shared_task
+def task_send_daily_message():
+    """Каждый день в установленное время отправляет пользователю полный список его привычек к исполнению на сегодня."""
+
+    for profile in TelegramProfile.objects.all():
+        chat_id = profile.telegram_chat_id
+        if not chat_id:
+            continue
+
+        # Беру все привычки пользователя на сегодня
+        habits = Habits.objects.filter(owner=profile.app_user)
+
+        if not habits.exists():
+            continue
+
+        # Формирую сообщение
+        lines = ["ПЛАНЫ НА СЕГОДНЯ:"]
+        for habit in habits.order_by("time"):  # Сортирую по времени
+            location = habit.location or "место не указано"
+            lines.append(f"✅ {habit.time.strftime('%H:%M')} - '{habit.description}' (место: {location}).")
+
+        message = "\n".join(lines)
+
+        # Отправляю список в телеграм
+        send_telegram_message(chat_id, message)
