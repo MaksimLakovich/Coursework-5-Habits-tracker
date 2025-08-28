@@ -21,11 +21,12 @@ class HabitsCreateAPIView(generics.CreateAPIView):
         # 2) Отложенная celery-задача
         habit = serializer.save()
         # # ВАРИАНТ 1: delay() - это постой вариант для вызова отложенной celery-задачи
-        # task_send_reminding_message(habit.pk)
-        # ВАРИАНТ 2: apply_async() - это вариант запуска отложенной celery-задачи с задержкой
+        # task_send_reminding_message.delay(habit.pk)
+        # ВАРИАНТ 2: apply_async() - это вариант запуска отложенной celery-задачи с задержкой (например, если нужно
+        # отправлять напоминания не сразу после создания, а через 2 минуты)
         task_send_reminding_message.apply_async(
             args=[habit.pk],
-            countdown=60 * 20 * 1  # 20 минут
+            countdown=60 * 2 * 1  # 2 мин
         )
 
 
@@ -63,9 +64,10 @@ class HabitsRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         """Запускает отложенную задачу по отправке напоминания о необходимости выполнения полезной привычки."""
         habit = serializer.save()
         # # ВАРИАНТ 1: delay() - это постой вариант для вызова отложенной celery-задачи
-        # task_send_reminding_message(habit.pk)
-        # ВАРИАНТ 2: apply_async() - это вариант запуска отложенной celery-задачи с задержкой
+        # task_send_reminding_message.delay(habit.pk)
+        # ВАРИАНТ 2: apply_async() - это вариант запуска отложенной celery-задачи с задержкой (например, если нужно
+        # отправлять напоминания не сразу после обновления, а через 2 минуты)
         task_send_reminding_message.apply_async(
             args=[habit.pk],
-            countdown=60 * 20 * 1  # 20 минут
+            countdown=60 * 2 * 1  # 2 мин
         )

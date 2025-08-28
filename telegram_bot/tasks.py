@@ -30,12 +30,17 @@ def task_send_reminding_message(self, habit_id):
         if not chat_id:
             return
 
-        now = timezone.localtime()
-        # В переменной habit_datetime я добавляю к параметру TIME из модели привычки (например: {"time": "15-00"})
-        # сегодняшнюю дату, чтоб потом можно было получить дельту в минутах (timedelta)
-        habit_datetime = timezone.make_aware(datetime.combine(now.date(), habit.time))
+        now_time = timezone.localtime().time()  # текущее время в формате HH:MM:SS
+        habit_time = habit.time  # время в модели самой привычки
 
-        delta = habit_datetime - now
+        # Превращаю оба time в datetime, чтоб потом можно было вычислить разницу и чтоб это было без учета ДАТЫ, а
+        # только по ВРЕМЯ, добавляю и там и там одинаковую дату = "0001-01-01"
+        today = datetime.min.date()
+
+        now_dt = datetime.combine(today, now_time)
+        habit_dt = datetime.combine(today, habit_time)
+        delta = habit_dt - now_dt
+
         if timedelta(minutes=0) <= delta <= timedelta(minutes=REMINDER_OFFSET_MINUTES):
             send_telegram_message(chat_id, message)
 
