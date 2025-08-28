@@ -1,7 +1,4 @@
-from datetime import datetime, timedelta
-
 from celery import shared_task  # type: ignore
-from django.utils import timezone
 
 from habits.models import Habits
 from telegram_bot.models import TelegramProfile
@@ -27,22 +24,11 @@ def task_send_reminding_message(self, habit_id):
         # get() принимает ключ=значение, а не сам объект. Поэтому просто get(habit.owner) не сработает
         tg_profile = TelegramProfile.objects.get(app_user=habit.owner)
         chat_id = tg_profile.telegram_chat_id
+
         if not chat_id:
             return
 
-        now_time = timezone.localtime().time()  # текущее время в формате HH:MM:SS
-        habit_time = habit.time  # время в модели самой привычки
-
-        # Превращаю оба time в datetime, чтоб потом можно было вычислить разницу и чтоб это было без учета ДАТЫ, а
-        # только по ВРЕМЯ, добавляю и там и там одинаковую дату = "0001-01-01"
-        today = datetime.min.date()
-
-        now_dt = datetime.combine(today, now_time)
-        habit_dt = datetime.combine(today, habit_time)
-        delta = habit_dt - now_dt
-
-        if timedelta(minutes=0) <= delta <= timedelta(minutes=REMINDER_OFFSET_MINUTES):
-            send_telegram_message(chat_id, message)
+        send_telegram_message(chat_id, message)
 
     except TelegramProfile.DoesNotExist:
         return
