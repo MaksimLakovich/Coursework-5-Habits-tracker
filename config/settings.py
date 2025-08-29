@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -183,3 +184,7 @@ CSRF_TRUSTED_ORIGINS = [
 # Запрещаем доступ для всех подряд (оставляем только из списка выше)
 CORS_ALLOW_ALL_ORIGINS = False
 
+# Отключение Celery при вызове тестов (mock/fake broker), чтоб при прогоне тестов не запускать сервер и брокер:
+if "test" in sys.argv:  # если запущены тесты
+    CELERY_TASK_ALWAYS_EAGER = True  # все задачи выполняются сразу, без брокера
+    CELERY_TASK_EAGER_PROPAGATES = True
