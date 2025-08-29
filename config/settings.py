@@ -22,7 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles',  # обязательно, иначе UI не поднимется
 
     # Добавляем это чтобы библиотека https://django-phonenumber-field.readthedocs.io/en/stable/index.html
     # использовала локализованные ошибки валидации номеров в поле PhoneNumberField
@@ -34,6 +34,9 @@ INSTALLED_APPS = [
 
     # Добавление пакета celery-beat
     'django_celery_beat',
+
+    # Добавление drf-yasg (Yet another Swagger generator for Django REST Framework) для API документации
+    'drf_yasg',
 
     # Приложения проекта
     'users',
