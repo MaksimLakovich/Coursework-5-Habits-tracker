@@ -39,6 +39,7 @@ mypy = "^1.17.1"
 mypy = "^1.17.1"
 django-stubs = "^5.2.2"
 djangorestframework-stubs = "^3.16.2"
+coverage = "^7.10.5"
 
 [tool.poetry]
 packages = [
