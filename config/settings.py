@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     # Добавление drf-yasg (Yet another Swagger generator for Django REST Framework) для API документации
     'drf_yasg',
 
+    # CORS
+    'corsheaders',
+
     # Приложения проекта
     'users',
     'habits',
@@ -47,11 +50,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # должно быть выше CommonMiddleware
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -160,3 +164,22 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(hour=9, minute=00),  # каждый день в 9:00
     },
 }
+
+# Настройки для CORS и CSRF
+# Разрешаем только конкретные origin’ы (более безопасно)
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # это типичный адрес фронтенда во время разработки. Чтобы фронт мог в разработке
+    # стучаться в наш Django API, нужно разрешить CORS с этого адреса. Если у нас нет фронтенда или он пока
+    # не разрабатывается, то http://localhost:3000 - это просто заготовка для будущих разработчиков.
+    'https://habits-frontend.example.com',  # продакшн фронтенд
+]
+
+# Для работы CSRF с кросс-доменными запросами (POST, PUT, DELETE)
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'https://habits-frontend.example.com',
+]
+
+# Запрещаем доступ для всех подряд (оставляем только из списка выше)
+CORS_ALLOW_ALL_ORIGINS = False
+
