@@ -9,5 +9,4 @@ class IsOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
         """Возвращает True, если пользователь является владельцем объекта.
         Используется в контроллерах для ограничения доступа к чужим объектам."""
-
         return obj.owner == request.user
