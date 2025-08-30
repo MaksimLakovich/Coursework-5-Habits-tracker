@@ -330,17 +330,33 @@ urlpatterns = [
 
 # <a id="title15">15. Тестирование приложения</a>
 
+Команды для запуска проверки уровня покрытия тестами:
+   ```commandline
+   coverage erase
+   coverage run manage.py test --keepdb
+   coverage report -m
+   ```
+
 ## _Приложение "Habits" (habits/tests.py):_
 
-1) Команды для проверки покрытия тестами:
-   ```
-   coverage run manage.py test
-   coverage report
-   coverage html
-   ```
+1) Класс `HabitsCRUDAPITestCase(APITestCase)` - тесты, которые будут проверять работу ***CRUD*** для привычек (Habits):
+   - `test_create_habit` - Создание новой полезной привычки (POST-запрос).
+   - `test_list_user_habits` - Получить список привычек пользователя (GET-запрос).
+   - `test_list_public_habits` - Получить список всех публичных привычек (GET-запрос).
+   - `test_update_habit` - Обновить существующую привычку (PATCH-запрос).
+   - `test_delete_habit` - Удалить существующую привычку (DELETE-запрос).
+   - `test_401_unauthenticated_get_list_public_habits` - Получение списка публичных привычек неавторизованным пользователем (401 - Unauthorized).
+   - `test_403_forbidden_update_habit_by_stranger` - Запрет редактирования чужих привычек (403 - Forbidden).
 
-2) Класс `` - тесты, которые будут проверять корректность работы CRUD для ...:
-   - `test_...` - тест ...
+2) Класс `HabitsValidatorsAPITestCase(APITestCase)` - тесты, которые будут проверять работу ***валидаторов*** для модели привычек (Habits):
+   - `test_cannot_set_both_reward_and_related_habit` - Нельзя указывать одновременно reward и related_pleasant_habit.
+   - `test_cannot_set_time_to_complete_more_than_120` - Нельзя указывать время выполнения больше 120 секунд.
+   - `test_cannot_set_reward_for_pleasant_habit` - Приятная привычка не может иметь вознаграждение.
+   - `test_cannot_set_periodicity_more_than_once_a_day` - Нельзя создавать привычку с периодичностью чаще, чем 1 раз в день.
+
+3) Класс `UserHabitsListPaginationAPITestCase(APITestCase)` - тесты, которые будут проверять работу ***пагинации*** списка привычек пользователя (Habits):
+  - `test_first_page_contains_page_size_results` - Первая страница возвращает ровно page_size привычек.
+  - `test_second_page_contains_remaining_results` - Вторая страница возвращает остаток привычек.
 
 
 
