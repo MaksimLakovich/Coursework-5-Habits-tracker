@@ -337,6 +337,18 @@ urlpatterns = [
    coverage report -m
    ```
 
+## _Приложение "Users" (users/views.py):_
+
+1) Класс `(UsersAPITestCase)` - тесты, которые будут проверять работу CRUD для пользователей (AppUser):
+  - `test_create_user` - Регистрация нового пользователя (POST-запрос).
+  - `test_get_own_profile` - Просмотр собственного профиля (GET).
+  - `test_update_own_profile` - Обновление собственного профиля (PATCH).
+  - `test_403_forbidden_update_other_user` - Попытка редактирования чужого профиля (403).
+  - `test_login` - Проверка входа (получение JWT токенов).
+  - `test_set_password_success` - Успешная смена пароля самим пользователем.
+  - `test_set_password_forbidden` - Попытка сменить пароль чужому пользователю (403).
+  - `test_set_password_unauthenticated` - Неавторизованный пользователь не может менять пароли (401).
+
 ## _Приложение "Habits" (habits/tests.py):_
 
 1) Класс `HabitsCRUDAPITestCase(APITestCase)` - тесты, которые будут проверять работу ***CRUD*** для привычек (Habits):
