@@ -1,0 +1,16 @@
+[run]
+branch = True
+source =
+    habits
+    users
+    telegram_bot
+omit =
+    */migrations/*
+    */tests.py
+    manage.py
+    config/*
+    */__init__.py
+
+[report]
+show_missing = True
+skip_covered = True

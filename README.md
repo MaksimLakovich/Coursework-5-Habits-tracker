@@ -20,7 +20,8 @@
 [17. Получение ключей .env](#title17) / 
 [18. Описание файла .flake8](#title18) / 
 [19. Описание файла mypy.ini](#title19) / 
-[20. Документация к API](#title20) / 
+[20. Описание файла .coveragerc](#title20) / 
+[21. Документация к API](#title21) / 
 
 
 
@@ -427,6 +428,31 @@ ignore_missing_imports = True
 
 
 
-# <a id="title20">20. Документация к API</a> 
+# <a id="title20">20. Описание файла .coveragerc</a> 
+```ini
+# Настройки для расчета покрытия кода так, чтоб считалось только по рабочим приложениям (например, habits, users, telegram_bot) 
+# и игнорировало тесты, миграции, manage.py и прочее.
+[run]
+branch = True
+source =
+    habits
+    users
+    telegram_bot
+omit =
+    */migrations/*
+    */tests.py
+    manage.py
+    config/*
+    */__init__.py
+
+[report]
+show_missing = True
+skip_covered = True
+```
+
+
+
+
+# <a id="title21">21. Документация к API</a> 
 1. ***Swagger UI*** по адресу: http://127.0.0.1:8000/swagger/
 2. ***Redoc*** по адресу: http://127.0.0.1:8000/redoc/
