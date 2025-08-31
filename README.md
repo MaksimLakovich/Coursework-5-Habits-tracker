@@ -129,6 +129,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
      - Внутренняя валидация в самом сериализаторе:
        - `validate_time_to_complete(self, value)` - кастомная валидация поля *time_to_complete*, что привычка должна выполняться в допустимом (заданном) диапазоне.
        - `validate_periodicity(self, value)` - кастомная валидация поля *periodicity*: привычка должна выполняться хотя бы 1 раз в 7 дней.
+       - `to_representation(self, instance)` - метод скрывает приватные данные других пользователей (*location*, *owner*) у публичных привычек.
      - Подключенные сторонние кастомные валидаторы:
        - `HabitRewardChoiceValidator`
        - `RelatedHabitPleasantValidator`

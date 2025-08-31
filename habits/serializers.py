@@ -34,6 +34,16 @@ class HabitsSerializer(serializers.ModelSerializer):
             )
         return value
 
+    def to_representation(self, instance):
+        """Скрывает приватные данные (location, owner) у публичных привычек других пользователей."""
+        data = super().to_representation(instance)
+        request = self.context.get("request")  # Достаю request. В DRF request передается в сериализатор через context.
+        if request and instance.owner != request.user:
+            # Убираю location и owner. Лучше добавить default=None, чтобы не словить KeyError, если поле уже удалено.
+            data.pop("location", None)
+            data.pop("owner", None)
+        return data
+
     class Meta:
         model = Habits
         fields = "__all__"
