@@ -330,7 +330,12 @@ urlpatterns = [
 
 # <a id="title15">15. Тестирование приложения</a>
 
-Команды для запуска проверки уровня покрытия тестами:
+Команда для запуска тестов:
+```commandline
+python3 manage.py test --keepdb
+```
+
+Команды для проверки уровня покрытия тестами:
    ```commandline
    coverage erase
    coverage run manage.py test --keepdb
@@ -340,35 +345,40 @@ urlpatterns = [
 ## _Приложение "Users" (users/views.py):_
 
 1) Класс `(UsersAPITestCase)` - тесты, которые будут проверять работу CRUD для пользователей (AppUser):
-  - `test_create_user` - Регистрация нового пользователя (POST-запрос).
-  - `test_get_own_profile` - Просмотр собственного профиля (GET).
-  - `test_update_own_profile` - Обновление собственного профиля (PATCH).
-  - `test_403_forbidden_update_other_user` - Попытка редактирования чужого профиля (403).
-  - `test_login` - Проверка входа (получение JWT токенов).
-  - `test_set_password_success` - Успешная смена пароля самим пользователем.
-  - `test_set_password_forbidden` - Попытка сменить пароль чужому пользователю (403).
-  - `test_set_password_unauthenticated` - Неавторизованный пользователь не может менять пароли (401).
+  - `test_create_user` - регистрация нового пользователя (POST-запрос).
+  - `test_get_own_profile` - просмотр собственного профиля (GET).
+  - `test_update_own_profile` - обновление собственного профиля (PATCH).
+  - `test_403_forbidden_update_other_user` - попытка редактирования чужого профиля (403).
+  - `test_login` - проверка входа (получение JWT токенов).
+  - `test_set_password_success` - успешная смена пароля самим пользователем.
+  - `test_set_password_forbidden` - попытка сменить пароль чужому пользователю (403).
+  - `test_set_password_unauthenticated` - неавторизованный пользователь не может менять пароли (401).
 
 ## _Приложение "Habits" (habits/tests.py):_
 
 1) Класс `HabitsCRUDAPITestCase(APITestCase)` - тесты, которые будут проверять работу ***CRUD*** для привычек (Habits):
-   - `test_create_habit` - Создание новой полезной привычки (POST-запрос).
-   - `test_list_user_habits` - Получить список привычек пользователя (GET-запрос).
-   - `test_list_public_habits` - Получить список всех публичных привычек (GET-запрос).
-   - `test_update_habit` - Обновить существующую привычку (PATCH-запрос).
-   - `test_delete_habit` - Удалить существующую привычку (DELETE-запрос).
-   - `test_401_unauthenticated_get_list_public_habits` - Получение списка публичных привычек неавторизованным пользователем (401 - Unauthorized).
-   - `test_403_forbidden_update_habit_by_stranger` - Запрет редактирования чужих привычек (403 - Forbidden).
+   - `test_create_habit` - создание новой полезной привычки (POST-запрос).
+   - `test_list_user_habits` - получить список привычек пользователя (GET-запрос).
+   - `test_list_public_habits` - получить список всех публичных привычек (GET-запрос).
+   - `test_update_habit` - обновить существующую привычку (PATCH-запрос).
+   - `test_delete_habit` - удалить существующую привычку (DELETE-запрос).
+   - `test_401_unauthenticated_get_list_public_habits` - получение списка публичных привычек неавторизованным пользователем (401 - Unauthorized).
+   - `test_403_forbidden_update_habit_by_stranger` - запрет редактирования чужих привычек (403 - Forbidden).
 
 2) Класс `HabitsValidatorsAPITestCase(APITestCase)` - тесты, которые будут проверять работу ***валидаторов*** для модели привычек (Habits):
-   - `test_cannot_set_both_reward_and_related_habit` - Нельзя указывать одновременно reward и related_pleasant_habit.
-   - `test_cannot_set_time_to_complete_more_than_120` - Нельзя указывать время выполнения больше 120 секунд.
-   - `test_cannot_set_reward_for_pleasant_habit` - Приятная привычка не может иметь вознаграждение.
-   - `test_cannot_set_periodicity_more_than_once_a_day` - Нельзя создавать привычку с периодичностью чаще, чем 1 раз в день.
+   - `test_cannot_set_both_reward_and_related_habit` - нельзя указывать одновременно reward и related_pleasant_habit.
+   - `test_cannot_set_time_to_complete_more_than_120` - нельзя указывать время выполнения больше 120 секунд.
+   - `test_cannot_set_reward_for_pleasant_habit` - приятная привычка не может иметь вознаграждение.
+   - `test_cannot_set_periodicity_more_than_once_a_day` - нельзя создавать привычку с периодичностью чаще, чем 1 раз в день.
 
 3) Класс `UserHabitsListPaginationAPITestCase(APITestCase)` - тесты, которые будут проверять работу ***пагинации*** списка привычек пользователя (Habits):
-  - `test_first_page_contains_page_size_results` - Первая страница возвращает ровно page_size привычек.
-  - `test_second_page_contains_remaining_results` - Вторая страница возвращает остаток привычек.
+  - `test_first_page_contains_page_size_results` - первая страница возвращает ровно page_size привычек.
+  - `test_second_page_contains_remaining_results` - вторая страница возвращает остаток привычек.
+
+## _Приложение "Telegram_bot" (telegram_bot/tests.py):_
+
+1) Класс `TelegramBotServicesTests(TestCase)` - тесты, которые будут проверять работу ***сервисов*** Telegram-бота:
+   - `test_send_telegram_message(self, mock_get)` - тест, что сервисная функция send_telegram_message() вызывает requests.get с правильными параметрами.
 
 
 
