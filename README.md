@@ -207,6 +207,13 @@ Backend-часть SPA веб-приложения (трекер полезны�
      - `perform_update(self, serializer)`: запускает отложенную задачу по отправке напоминания о необходимости выполнения полезной привычки:
        - параметр ***countdown*** для функции запуска отложенной задачи рассчитывается индивидуально для каждой привычки через сервисную функцию set_param_countdown().
 
+## _Приложение "Telegram_bot" (telegram_bot/urls.py):_
+
+1) Класс-контроллер `TelegramConnectAPIView(APIView)` - для привязки Telegram-аккаунта пользователя к его Telegram-профилю в приложении, когда он выбирает команду "/start" в Telegram-боте:
+   - на основе базового ***APIView***.
+   - методы:
+     - `post(self, request)`: метод ............
+
 
 
 
@@ -236,7 +243,13 @@ urlpatterns = [
 ]
 ```
 
+## _Приложение "Telegram_bot" (telegram_bot/urls.py):_
 
+```python
+urlpatterns = [
+    path("telegram/connect/", TelegramConnectAPIView.as_view(), name="telegram-connect"),
+]
+```
 
 
 # <a id="title8">8. Описание прав доступов (permissions)</a>
