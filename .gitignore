@@ -117,6 +117,8 @@ __pypackages__/
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid
+dump.rdb
+celerybeat-schedule.db
 
 # SageMath parsed files
 *.sage.py
@@ -162,3 +164,7 @@ cython_debug/
 .idea/
 
 .DS_Store
+
+
+# telegram bot credential storage (ххранение учетных данных - access и refresf токены)
+/telegram_bot/data/user_credential.json
