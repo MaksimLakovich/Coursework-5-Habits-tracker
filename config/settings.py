@@ -1,6 +1,9 @@
 import os
+import sys
+from datetime import timedelta
 from pathlib import Path
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 # Загрузка переменных из .env-файла
@@ -20,25 +23,40 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles',  # обязательно, иначе UI не поднимется
 
-    # # Добавляем это чтобы библиотека https://django-phonenumber-field.readthedocs.io/en/stable/index.html
-    # # использовала локализованные ошибки валидации номеров в поле PhoneNumberField
-    # 'phonenumber_field',
+    # Добавляем это чтобы библиотека https://django-phonenumber-field.readthedocs.io/en/stable/index.html
+    # использовала локализованные ошибки валидации номеров в поле PhoneNumberField
+    'phonenumber_field',
+
+    # DRF (Django REST framework) - это библиотека, которая работает со стандартными моделями Django для создания
+    # гибкого и мощного API-сервера для проекта.
+    'rest_framework',
+
+    # Добавление пакета celery-beat
+    'django_celery_beat',
+
+    # Добавление drf-yasg (Yet another Swagger generator for Django REST Framework) для API документации
+    'drf_yasg',
+
+    # CORS
+    'corsheaders',
 
     # Приложения проекта
-    # 'users',
-    # 'lms_system',
+    'users',
+    'habits',
+    'telegram_bot',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # должно быть выше CommonMiddleware
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -88,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -104,4 +122,69 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'users.AppUser'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ]
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=180),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+
+# Настройки для Celery
+# URL-адрес брокера сообщений. Например, Redis, который по умолчанию работает на порту 6379 — адрес брокера сообщений.
+# Формат: redis://<host>:<port>/<db_number>.
+# /0 и /1 и так далее — разные базы в Redis (например, чтобы задачи Celery и кэш Django не мешали друг другу).
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+# URL-адрес брокера результатов — хранилище результатов выполнения задач. Можно использовать тот же Redis,
+# что и для брокера.
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+# Часовой пояс для работы Celery — важно для периодических задач, чтобы они выполнялись в правильное время.
+# Пример, CELERY_TIMEZONE = "Australia/Tasmania", я ссылаюсь на наш TIME_ZONE проекта, чтоб все было в одном поясе
+CELERY_TIMEZONE = TIME_ZONE
+# Флаг отслеживания выполнения задач — Celery будет отслеживать состояние "в процессе".
+CELERY_TASK_TRACK_STARTED = True
+# Максимальное время на выполнение задачи
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# Настройки для Telegram-бота (отправка напоминаний)
+TELEGRAM_API_URL = 'https://api.telegram.org/bot'
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+
+# Настройка расписания запуска периодической задачи через Celery-beat
+CELERY_BEAT_SCHEDULE = {
+    'task-send-daily-message': {
+        'task': 'telegram_bot.tasks.task_send_daily_message',
+        'schedule': crontab(hour=9, minute=00),  # каждый день в 9:00
+    },
+}
+
+# Настройки для CORS и CSRF
+# Разрешаем только конкретные origin’ы (более безопасно)
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # это типичный адрес фронтенда во время разработки. Чтобы фронт мог в разработке
+    # стучаться в наш Django API, нужно разрешить CORS с этого адреса. Если у нас нет фронтенда или он пока
+    # не разрабатывается, то http://localhost:3000 - это просто заготовка для будущих разработчиков.
+    'https://habits-frontend.example.com',  # продакшн фронтенд
+]
+
+# Для работы CSRF с кросс-доменными запросами (POST, PUT, DELETE)
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'https://habits-frontend.example.com',
+]
+
+# Запрещаем доступ для всех подряд (оставляем только из списка выше)
+CORS_ALLOW_ALL_ORIGINS = False
+
+# Отключение Celery при вызове тестов (mock/fake broker), чтоб при прогоне тестов не запускать сервер и брокер:
+if "test" in sys.argv:  # если запущены тесты
+    CELERY_TASK_ALWAYS_EAGER = True  # все задачи выполняются сразу, без брокера
+    CELERY_TASK_EAGER_PROPAGATES = True
