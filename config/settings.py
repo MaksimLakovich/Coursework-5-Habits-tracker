@@ -15,6 +15,11 @@ SECRET_KEY = os.getenv('SECRET_KEY_FOR_PROJECT')
 
 DEBUG = True if os.getenv('DEBUG') == 'True' else False
 
+# ALLOWED_HOSTS в Django - это список доменов/IP, с которых разрешено обращаться к приложению.
+# 1) Если поставить ['*'], то Django будет принимать запросы с любого домена/IP. Это удобно на этапе тестового
+# деплоя (ВМ, Nginx), когда ещё нет точного домена.
+# 2) Но в боевой среде так оставлять не рекомендуется - лучше явно указать:
+# ALLOWED_HOSTS = ["mydomain.com", "www.mydomain.com", "123.45.67.89"]
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
@@ -89,6 +94,19 @@ DATABASES = {
     }
 }
 
+# База данных для тестов при разворачивании приложения (чтоб не разворачивать сразу postgresql достаточно в начале
+# для тестов развернуть sqlite
+if 'test' in sys.argv:
+    # это нужно чтоб выполнять задачи синхронно, без брокера. Чтоб в GitHub Actions не появлялась ошибка при деплое
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = True
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'test_db.sqlite3',
+        }
+    }
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -116,6 +134,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+# STATIC_ROOT важен при развертывании приложения на ВМ и использовании Nginx
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
