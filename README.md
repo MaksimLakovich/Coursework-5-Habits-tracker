@@ -22,6 +22,7 @@
 [19. Описание файла .coveragerc](#title19) / 
 [20. Документация к API](#title20) / 
 [21. Установка проекта](#title21) / 
+[22. Установка и запуск проекта на сервере (через Docker и Nginx)](#title22) / 
 
 
 
@@ -572,3 +573,33 @@ skip_covered = True
    poetry install
    ```
 3. Заполните файл `.env` по примеру `.env.example`
+
+
+
+
+# <a id="title22">22. Установка и запуск проекта на сервере (через Docker и Nginx)</a>
+
+1. Клонируйте репозиторий:
+    ```commandline
+    git clone https://github.com/MaksimLakovich/Homework-5-python-DJANGO-REST-FRAMEWORK.git
+    cd Homework-5-python-DJANGO-REST-FRAMEWORK.git
+    ```
+
+2. Создайте файл окружения ***.env.docker*** (на основе примера *.env.docker.example*) и заполните его реальными данными:
+    ```commandline
+    cp .env.docker.example .env.docker
+    nano .env.docker
+    ```
+   
+3. Соберите и запустите контейнеры:
+    ```commandline
+    docker-compose up -d --build
+    ```
+   
+4. Выполните миграции и соберите статику (если они ещё не применялись):
+    ```commandline
+    docker-compose exec web python manage.py migrate
+    docker-compose exec web python manage.py collectstatic --noinput
+    ```
+   
+5. После успешного запуска приложение будет доступно по IP-адресу вашей ВМ на порту 80: `http://<ваш-ip>`
