@@ -84,15 +84,6 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
-#      - name: Deploy to Server  # выполняет деплой на удаленный сервер: извлекает новый Docker-образ, останавливает старый контейнер, если он существует, и развертывает новый контейнер на основе обновленного образа
-#        run: |
-#          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-#            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/habits_tracker:${{ github.sha }}
-#            docker stop habits_tracker || true
-#            docker rm habits_tracker || true
-#            docker run -d --name habits_tracker -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/habits_tracker:${{ github.sha }}
-#          EOF
-
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
@@ -114,7 +105,7 @@ jobs:
             # 2) reset --hard делает локальную ветку идентичной удалённой - отбрасывает все локальные изменения.
             # Это жёсткий способ: никаких конфликтов, никаких «случайных правок на сервере». Сервер всегда = GitHub.
             # Для продакшн-деплоя это считается более надёжным подходом.
-            # 3) Можно указать другую ветку например "feature/homework_35_2" если нужно деплоить раньше на develop или feature, но для прода должно быть "main"
+            # 3) Можно указать другую ветку например "feature/task_2" если нужно деплоить раньше на develop или feature, но для прода должно быть "main"
             # git fetch origin main
             # git reset --hard main
             git pull origin feature/task_2
