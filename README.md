@@ -17,10 +17,11 @@
 [14. Тестирование приложения](#title14) /
 [15. Установка проекта](#title15) / 
 [16. Получение ключей .env](#title16) / 
-[17. Описание файла .flake8](#title17) / 
-[18. Описание файла mypy.ini](#title18) / 
-[19. Описание файла .coveragerc](#title19) / 
-[20. Документация к API](#title20) / 
+[17. Получение ключей .env.docker.example](#title17) / 
+[18. Описание файла .flake8](#title18) / 
+[19. Описание файла mypy.ini](#title19) / 
+[20. Описание файла .coveragerc](#title20) / 
+[21. Документация к API](#title21) / 
 
 
 
@@ -434,8 +435,7 @@ python3 manage.py test --keepdb
 # <a id="title16">16. Получение ключей. Описание файла .env.example</a> 
 1. Создайте файл .env в корне проекта из копии подготовленного файла `.env.example`, в котором описаны названия всех переменных, необходимых для работы приложения.
 2. Замените значения переменных реальными данными.
-3. В модуле `settings.py` существует секретный ключ `SECRET_KEY`, который рекомендуется в целях безопасности хранить в тайне:
-4. Файл .env должен содержать данные:
+3. Файл должен содержать данные:
 ```dotenv
 # Настройки секретного ключа проекта django в config/settings.py
 #Django рекомендует в целях безопасности хранить секретный ключ, используемый в продакшене, в тайне!
@@ -465,7 +465,51 @@ TELEGRAM_BOT_TOKEN=
 
 
 
-# <a id="title17">17. Описание файла .flake8</a> 
+# <a id="title17">17. Получение ключей. Описание файла .env.docker.example</a> 
+1. Создайте файл .env.docker в корне проекта из копии подготовленного файла `.env.docker.example`, в котором описаны названия всех переменных, необходимых для работы приложения.
+2. Замените значения переменных реальными данными.
+3. Файл должен содержать данные:
+```dotenv
+# Настройки секретного ключа проекта django в config/settings.py
+#Django рекомендует в целях безопасности хранить секретный ключ, используемый в продакшене, в тайне!
+SECRET_KEY_FOR_PROJECT=secret_key_here
+
+# Настройки дебага. В settings.py дебаг должен быть описан так: DEBUG = True if os.getenv('DEBUG') == 'True' else False
+DEBUG=
+
+# Настройки БД (ВАЖНО!!! В Docker DATABASE_HOST = db)
+# Название базы для приложения:
+# 1) Postgres (для контейнера db)
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+
+# 2) Django (чтобы settings.py подхватывал те же значения)
+DATABASE_NAME="${POSTGRES_DB}"
+DATABASE_USER="${POSTGRES_USER}"
+DATABASE_PASSWORD="${POSTGRES_PASSWORD}"
+DATABASE_HOST=db
+DATABASE_PORT=
+
+
+# Это базовый вариант (разные БД Redis под брокера и результаты).
+# Но, если хочется проще, то можно один и тот же (/0) использовать, но на проде лучше разделять!
+# 1) URL-адрес брокера сообщений (Redis) (ВАЖНО!!! В Docker Redis = redis)
+CELERY_BROKER_URL=redis://redis:6379/0
+# 2) URL-адрес брокера результатов - хранилище результатов выполнения задач (ВАЖНО!!! В Docker Redis = redis)
+CELERY_RESULT_BACKEND=redis://redis:6379/1
+
+# Настройки для Telegram-бота (токен)
+TELEGRAM_BOT_TOKEN=
+
+# Имя пользователя DockerHub с которым связан наш репозитория проекта на GitHub через настройки секретного ключа там
+DOCKER_HUB_USERNAME=
+```
+
+
+
+
+# <a id="title18">18. Описание файла .flake8</a> 
 ```angelscript
 [flake8]
 max-line-length = 119
@@ -476,7 +520,7 @@ exclude = .git, __pycache__, venv, .venv, */migrations/*,
 
 
 
-# <a id="title18">18. Описание файла mypy.ini</a> 
+# <a id="title19">19. Описание файла mypy.ini</a> 
 ```ini
 # Настроил mypy для Django, указав путь к settings.py.
 # Это нужно было чтоб убрать ошибки проверки mypy
@@ -500,7 +544,7 @@ ignore_missing_imports = True
 
 
 
-# <a id="title19">19. Описание файла .coveragerc</a> 
+# <a id="title20">20. Описание файла .coveragerc</a> 
 ```ini
 # Настройки для расчета покрытия кода так, чтоб считалось только по рабочим приложениям (например, habits, users, telegram_bot) 
 # и игнорировало тесты, миграции, manage.py и прочее.
@@ -525,6 +569,6 @@ skip_covered = True
 
 
 
-# <a id="title20">20. Документация к API</a> 
+# <a id="title21">21. Документация к API</a> 
 1. ***Swagger UI*** по адресу: http://127.0.0.1:8000/swagger/
 2. ***Redoc*** по адресу: http://127.0.0.1:8000/redoc/
