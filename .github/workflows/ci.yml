@@ -115,8 +115,8 @@ jobs:
             # Это жёсткий способ: никаких конфликтов, никаких «случайных правок на сервере». Сервер всегда = GitHub.
             # Для продакшн-деплоя это считается более надёжным подходом.
             # 3) Можно указать другую ветку например "feature/homework_35_2" если нужно деплоить раньше на develop или feature, но для прода должно быть "main"
-            # git fetch origin main
-            # git reset --hard main
+            git fetch origin main
+            git reset --hard main
             git pull origin main
   
             # Подтягиваем все новые образы (web, nginx и т.д.)
