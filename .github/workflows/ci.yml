@@ -1,6 +1,6 @@
 name: Django CI for Habits tracker
 
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
 
