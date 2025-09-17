@@ -5,7 +5,7 @@ name: Django CI for Habits tracker
 #    branches:
 #      - main         # деплой только при пуше (т.е. после merge) в main
 
-on: [push, pull_request]
+on: [pull]
 
 jobs:
 
