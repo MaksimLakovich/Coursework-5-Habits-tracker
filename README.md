@@ -14,13 +14,16 @@
 [11. Сервисные функции](#title11) / 
 [12. Вспомогательные функции](#title12) / 
 [13. Отложенные задачи](#title13) / 
-[14. Тестирование приложения](#title14) /
-[15. Установка проекта](#title15) / 
-[16. Получение ключей .env](#title16) / 
+[14. Тестирование приложения](#title14) / 
+[15. Получение ключей .env](#title15) / 
+[16. Получение ключей .env.docker.example](#title16) / 
 [17. Описание файла .flake8](#title17) / 
 [18. Описание файла mypy.ini](#title18) / 
 [19. Описание файла .coveragerc](#title19) / 
 [20. Документация к API](#title20) / 
+[21. Установка проекта](#title21) / 
+[22. Установка и запуск проекта на сервере (через Docker и Nginx)](#title22) / 
+[23. Автоматический деплой через GitHub Actions](#title23) / 
 
 
 
@@ -416,26 +419,11 @@ python3 manage.py test --keepdb
 
 
 
-
-# <a id="title15">15. Установка проекта</a>
-1. Клонируйте репозиторий:
-   ```
-   git clone https://github.com/MaksimLakovich/Coursework-5-Habits-tracker.git
-   ```
-2. Установите зависимости:
-   ```
-   poetry install
-   ```
-3. Заполните файл `.env` по примеру `.env.example`
-
-
-
-
-# <a id="title16">16. Получение ключей. Описание файла .env.example</a> 
+    
+# <a id="title15">15. Получение ключей. Описание файла .env.example</a> 
 1. Создайте файл .env в корне проекта из копии подготовленного файла `.env.example`, в котором описаны названия всех переменных, необходимых для работы приложения.
 2. Замените значения переменных реальными данными.
-3. В модуле `settings.py` существует секретный ключ `SECRET_KEY`, который рекомендуется в целях безопасности хранить в тайне:
-4. Файл .env должен содержать данные:
+3. Файл должен содержать данные:
 ```dotenv
 # Настройки секретного ключа проекта django в config/settings.py
 #Django рекомендует в целях безопасности хранить секретный ключ, используемый в продакшене, в тайне!
@@ -460,6 +448,72 @@ CELERY_RESULT_BACKEND=
 
 # Настройки для Telegram-бота (токен)
 TELEGRAM_BOT_TOKEN=
+# 1) ЧТО ЭТО?
+# Если используется нестандартный порт (например, http://127.0.0.1:8081/admin/ вместо http://127.0.0.1:8000/admin/),
+# то Django будет не доверять адресу http://127.0.0.1:8081/admin/, так как источник будет не совпадать с
+# доверенным доменом из ALLOWED_HOSTS или CSRF_TRUSTED_ORIGINS и выдаст 403 CSRF verification failed.
+# Чтоб исключить ошибку нужно добавить параметр CSRF_TRUSTED_ORIGINS в settings.py и указывать в нем список
+# доверенных доменов с портами
+# 2) ДОП ПОЯСНЕНИЕ:
+# Django проверяет конфигурацию, и в CSRF_TRUSTED_ORIGINS должен быть СПИСОК и без пустых некорректных
+# данных, поэтому если не хардкодить тут и выносить в .ENV , то нужно писать код для создания списка без пустых
+# значений в конце.
+CSRF_TRUSTED_ORIGINS=http://хост:8081,http://localhost:3000
+```
+
+
+
+
+# <a id="title16">16. Получение ключей. Описание файла .env.docker.example</a> 
+1. Создайте файл .env.docker в корне проекта из копии подготовленного файла `.env.docker.example`, в котором описаны названия всех переменных, необходимых для работы приложения.
+2. Замените значения переменных реальными данными.
+3. Файл должен содержать данные:
+```dotenv
+# Настройки секретного ключа проекта django в config/settings.py
+#Django рекомендует в целях безопасности хранить секретный ключ, используемый в продакшене, в тайне!
+SECRET_KEY_FOR_PROJECT=secret_key_here
+
+# Настройки дебага. В settings.py дебаг должен быть описан так: DEBUG = True if os.getenv('DEBUG') == 'True' else False
+DEBUG=
+
+# Настройки БД (ВАЖНО!!! В Docker DATABASE_HOST = db)
+# Название базы для приложения:
+# 1) Postgres (для контейнера db)
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+
+# 2) Django (чтобы settings.py подхватывал те же значения)
+DATABASE_NAME="${POSTGRES_DB}"
+DATABASE_USER="${POSTGRES_USER}"
+DATABASE_PASSWORD="${POSTGRES_PASSWORD}"
+DATABASE_HOST=db
+DATABASE_PORT=
+
+
+# Это базовый вариант (разные БД Redis под брокера и результаты).
+# Но, если хочется проще, то можно один и тот же (/0) использовать, но на проде лучше разделять!
+# 1) URL-адрес брокера сообщений (Redis) (ВАЖНО!!! В Docker Redis = redis)
+CELERY_BROKER_URL=redis://redis:6379/0
+# 2) URL-адрес брокера результатов - хранилище результатов выполнения задач (ВАЖНО!!! В Docker Redis = redis)
+CELERY_RESULT_BACKEND=redis://redis:6379/1
+
+# Настройки для Telegram-бота (токен)
+TELEGRAM_BOT_TOKEN=
+
+# Имя пользователя DockerHub с которым связан наш репозитория проекта на GitHub через настройки секретного ключа там
+DOCKER_HUB_USERNAME=
+# 1) ЧТО ЭТО?
+# Если используется нестандартный порт (например, http://127.0.0.1:8081/admin/ вместо http://127.0.0.1:8000/admin/),
+# то Django будет не доверять адресу http://127.0.0.1:8081/admin/, так как источник будет не совпадать с
+# доверенным доменом из ALLOWED_HOSTS или CSRF_TRUSTED_ORIGINS и выдаст 403 CSRF verification failed.
+# Чтоб исключить ошибку нужно добавить параметр CSRF_TRUSTED_ORIGINS в settings.py и указывать в нем список
+# доверенных доменов с портами
+# 2) ДОП ПОЯСНЕНИЕ:
+# Django проверяет конфигурацию, и в CSRF_TRUSTED_ORIGINS должен быть СПИСОК и без пустых некорректных
+# данных, поэтому если не хардкодить тут и выносить в .ENV , то нужно писать код для создания списка без пустых
+# значений в конце.
+CSRF_TRUSTED_ORIGINS=http://хост:8081,http://localhost:3000
 ```
 
 
@@ -470,7 +524,7 @@ TELEGRAM_BOT_TOKEN=
 [flake8]
 max-line-length = 119
 ignore = E203, W503
-exclude = .git, __pycache__, venv, .venv
+exclude = .git, __pycache__, venv, .venv, */migrations/*,
 ```
 
 
@@ -528,3 +582,73 @@ skip_covered = True
 # <a id="title20">20. Документация к API</a> 
 1. ***Swagger UI*** по адресу: http://127.0.0.1:8000/swagger/
 2. ***Redoc*** по адресу: http://127.0.0.1:8000/redoc/
+
+
+
+
+# <a id="title21">21. Установка проекта</a>
+1. Клонируйте репозиторий:
+   ```
+   git clone https://github.com/MaksimLakovich/Coursework-5-Habits-tracker.git
+   ```
+2. Установите зависимости:
+   ```
+   poetry install
+   ```
+3. Заполните файл `.env` по примеру `.env.example`
+
+
+
+
+# <a id="title22">22. Установка и запуск проекта на сервере (через Docker и Nginx)</a>
+
+1. Клонируйте репозиторий:
+    ```commandline
+    git clone https://github.com/MaksimLakovich/Homework-5-python-DJANGO-REST-FRAMEWORK.git
+    cd Homework-5-python-DJANGO-REST-FRAMEWORK.git
+    ```
+
+2. Создайте файл окружения ***.env.docker*** (на основе примера *.env.docker.example*) и заполните его реальными данными:
+    ```commandline
+    cp .env.docker.example .env.docker
+    nano .env.docker
+    ```
+   
+3. Соберите и запустите контейнеры:
+    ```commandline
+    docker-compose up -d --build
+    ```
+   
+4. Выполните миграции и соберите статику (если они ещё не применялись):
+    ```commandline
+    docker-compose exec web python manage.py migrate
+    docker-compose exec web python manage.py collectstatic --noinput
+    ```
+   
+5. После успешного запуска приложение будет доступно по IP-адресу вашей ВМ на порту 80: `http://<ваш-ip>`
+
+
+
+
+# <a id="title23">23. Автоматический деплой через GitHub Actions</a> 
+
+Репозиторий настроен на автоматический деплой через GitHub Actions.
+
+1. При каждом push в ветку main происходит:
+   - запуск линтера (flake8),
+   - запуск тестов (с использованием SQLite),
+   - сборка Docker-образа,
+   - публикация образа в Docker Hub,
+   - деплой на удалённый сервер (IP: 158.160.199.127:8081 - ***ДЛЯ ИНФО!* В проекте используется динамический IP-адрес поэтому может измениться со временем!**).
+2. Для работы пайплайна настроены секреты в GitHub:
+   - для публикации образов:
+     - DOCKER_HUB_USERNAME
+     - DOCKER_HUB_ACCESS_TOKEN
+   - для деплоя на сервер:
+     - SSH_USER
+     - SERVER_IP
+     - SSH_KEY
+
+После успешного выполнения пайплайна приложение автоматически обновляется и доступно по адресу:
+
+http://158.160.199.127:8081/admin/

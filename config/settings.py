@@ -15,6 +15,11 @@ SECRET_KEY = os.getenv('SECRET_KEY_FOR_PROJECT')
 
 DEBUG = True if os.getenv('DEBUG') == 'True' else False
 
+# ALLOWED_HOSTS в Django - это список доменов/IP, с которых разрешено обращаться к приложению.
+# 1) Если поставить ['*'], то Django будет принимать запросы с любого домена/IP. Это удобно на этапе тестового
+# деплоя (ВМ, Nginx), когда ещё нет точного домена.
+# 2) Но в боевой среде так оставлять не рекомендуется - лучше явно указать:
+# ALLOWED_HOSTS = ["mydomain.com", "www.mydomain.com", "123.45.67.89"]
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
@@ -89,6 +94,19 @@ DATABASES = {
     }
 }
 
+# База данных для тестов при разворачивании приложения (чтоб не разворачивать сразу postgresql достаточно в начале
+# для тестов развернуть sqlite
+if 'test' in sys.argv:
+    # это нужно чтоб выполнять задачи синхронно, без брокера. Чтоб в GitHub Actions не появлялась ошибка при деплое
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = True
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'test_db.sqlite3',
+        }
+    }
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -116,6 +134,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+# STATIC_ROOT важен при развертывании приложения на ВМ и использовании Nginx
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -176,9 +196,18 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # Для работы CSRF с кросс-доменными запросами (POST, PUT, DELETE)
+# 1) ЧТО ЭТО?
+# Если используется нестандартный порт (например, http://127.0.0.1:8081/admin/ вместо http://127.0.0.1:8000/admin/),
+# то Django будет не доверять адресу http://127.0.0.1:8081/admin/, так как источник будет не совпадать с
+# доверенным доменом из ALLOWED_HOSTS или CSRF_TRUSTED_ORIGINS и выдаст 403 CSRF verification failed.
+# Чтоб исключить ошибку нужно добавить параметр CSRF_TRUSTED_ORIGINS в settings.py и указывать в нем список
+# доверенных доменов с портами
+# 2) ДОП ПОЯСНЕНИЕ:
+# Django проверяет конфигурацию, и в CSRF_TRUSTED_ORIGINS должен быть СПИСОК и без пустых некорректных
+# данных, поэтому если не хардкодить тут и выносить в .ENV , то нужно писать код для создания списка без пустых
+# значений в конце.
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-    'https://habits-frontend.example.com',
+    origin for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if origin
 ]
 
 # Запрещаем доступ для всех подряд (оставляем только из списка выше)
