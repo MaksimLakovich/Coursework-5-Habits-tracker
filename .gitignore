@@ -111,12 +111,14 @@ ipython_config.py
 .pdm-python
 .pdm-build/
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+# PEP 582; used by e.g. .github.com/David-OConnor/pyflow and .github.com/pdm-project/pdm
 __pypackages__/
 
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid
+dump.rdb
+celerybeat-schedule.db
 
 # SageMath parsed files
 *.sage.py
@@ -129,6 +131,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.env.docker
 
 # Spyder project settings
 .spyderproject
@@ -162,3 +165,7 @@ cython_debug/
 .idea/
 
 .DS_Store
+
+
+# telegram bot credential storage (ххранение учетных данных - access и refresf токены)
+/telegram_bot/data/user_credential.json
