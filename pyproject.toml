@@ -1,11 +1,14 @@
 [project]
-name = "coursework-5-habits-tracker"
+name = "habits-tracker"
 version = "0.1.0"
 description = ""
 authors = [
     {name = "Maksim Lakovich",email = "maks.lakovich@gmail.com"}
 ]
 readme = "README.md"
+package-mode = false
+
+
 requires-python = ">=3.12,<4.0"
 dependencies = [
     "django (>=5.2.5,<6.0.0)",

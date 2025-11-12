@@ -97,12 +97,12 @@ jobs:
             cd /var/www/habits_tracker
       
             # Если проект не склонирован, то клонируем
-            if [ ! -d "Coursework-5-Habits-tracker" ]; then
-              git clone git@github.com:maksimlakovich/Coursework-5-Habits-tracker.git
+            if [ ! -d "Habits-tracker" ]; then
+              git clone git@github.com:maksimlakovich/Habits-tracker.git
             fi
       
             # Переходим внутрь проекта
-            cd Coursework-5-Habits-tracker
+            cd Habits-tracker
             
             # Подтягиваем свежие изменения из GitHub (docker-compose.yml, env и т.д.)
             # 1) fetch подтягивает новые данные.
