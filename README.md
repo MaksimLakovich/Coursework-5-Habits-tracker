@@ -1,5 +1,6 @@
 # HABITS TRACKER API (Django REST Framework)
 
+---
 
 [1. Цель проекта](#title1) / 
 [2. Модели](#title2) / 
@@ -25,8 +26,7 @@
 [22. Установка и запуск проекта на сервере (через Docker и Nginx)](#title22) / 
 [23. Автоматический деплой через GitHub Actions](#title23) / 
 
-
-
+---
 
 # <a id="title1">1. Цель проекта</a>
 Backend-часть SPA веб-приложения (трекер полезных привычек), которое посвящено работе по приобретению новых полезных привычек и искоренению старых плохих привычек.
@@ -37,8 +37,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
 - Habits
 - Telegram_bot
 
-
-
+---
 
 # <a id="title2">2. Описание моделей (models)</a>
 
@@ -85,8 +84,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
      - Telegram ChatID (telegram_chat_id).
      - Telegram UserID (telegram_user_id).
 
-
-
+---
 
 # <a id="title3">3. Описание админок (admin)</a>
 
@@ -102,8 +100,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 1) Админка `TelegramProfileAdmin(admin.ModelAdmin)` - отображение данных модели *TelegramProfile* (Телеграм-профиль) в админке.
 
-
-
+---
 
 # <a id="title4">4. Описание сериализаторов (serializers)</a>
 
@@ -137,8 +134,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
        - `RelatedHabitPleasantValidator`
        - `PleasantHabitRestrictionsValidator`
 
-
-
+---
 
 # <a id="title5">5. Описание валидации (validators)</a>
 
@@ -155,8 +151,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
 
 3) Класс-валидатор `PleasantHabitRestrictionsValidator` - для проверки, что у приятной привычки не может быть вознаграждения или связанной привычки.
 
-
-
+---
 
 # <a id="title6">6. Описание контроллеров (views)</a>
 
@@ -229,8 +224,7 @@ Backend-часть SPA веб-приложения (трекер полезны�
       - "created=True" - профиль был создан;
       - "created=False" - профиль уже существовал и был обновлён.
 
-
-
+---
 
 # <a id="title7"7. Описание маршрутов (urls)</a>
 
@@ -266,6 +260,7 @@ urlpatterns = [
 ]
 ```
 
+---
 
 # <a id="title8">8. Описание прав доступов (permissions)</a>
 
@@ -277,8 +272,7 @@ urlpatterns = [
 
 1) Класс `IsOwner(BasePermission)` - кастомный permission-класс, который проверяет, является ли пользователь владельцем (owner) объекта.
 
-
-
+---
 
 # <a id="title9">9. Описание пагинации (paginators)</a>
 
@@ -288,8 +282,7 @@ urlpatterns = [
    - `UserHabitsListPagination(BaseHabitsListPagination)`: вывод по 5 привычек на странице ***/habits/user/***.
    - `PublicHabitsListPagination(BaseHabitsListPagination)`: вывод по 10 привычек на странице ***/habits/public/***.
 
-
-
+---
 
 # <a id="title10">10. Описание Telegram-бота</a>
  
@@ -322,8 +315,7 @@ urlpatterns = [
   - обновляет access
   - вызывает Django API /api/telegram/connect/ чтобы привязать telegram_chat_id к пользователю.
 
-
-
+---
 
 # <a id="title11">11. Описание сервисных функций (services)</a>
 
@@ -338,8 +330,7 @@ urlpatterns = [
    - ***:param chat_id***: Telegram ChatID пользователя.
    - ***:param message***: Текст сообщения в Telegram.
 
-
-
+---
 
 # <a id="title12">12. Вспомогательные функции</a>
 
@@ -349,8 +340,7 @@ urlpatterns = [
    - функция `create_user()` - создает и возвращает обычного пользователя.
    - функция `create_superuser()` - создает и возвращает суперпользователя.
 
-
-
+---
 
 # <a id="title13">13. Отложенные задачи</a>
 
@@ -362,8 +352,7 @@ urlpatterns = [
 
 1) Периодическая задача `task_send_daily_message()` - каждый день в установленное время отправляет пользователю полный список его привычек к исполнению на сегодня.
 
-
-
+---
 
 # <a id="title14">14. Тестирование приложения</a>
 
@@ -417,8 +406,7 @@ python3 manage.py test --keepdb
 1) Класс `TelegramBotServicesTests(TestCase)` - тесты, которые будут проверять работу ***сервисов*** Telegram-бота:
    - `test_send_telegram_message(self, mock_get)` - тест, что сервисная функция send_telegram_message() вызывает requests.get с правильными параметрами.
 
-
-
+---
     
 # <a id="title15">15. Получение ключей. Описание файла .env.example</a> 
 1. Создайте файл .env в корне проекта из копии подготовленного файла `.env.example`, в котором описаны названия всех переменных, необходимых для работы приложения.
@@ -461,8 +449,7 @@ TELEGRAM_BOT_TOKEN=
 CSRF_TRUSTED_ORIGINS=http://хост:8081,http://localhost:3000
 ```
 
-
-
+---
 
 # <a id="title16">16. Получение ключей. Описание файла .env.docker.example</a> 
 1. Создайте файл .env.docker в корне проекта из копии подготовленного файла `.env.docker.example`, в котором описаны названия всех переменных, необходимых для работы приложения.
@@ -516,8 +503,7 @@ DOCKER_HUB_USERNAME=
 CSRF_TRUSTED_ORIGINS=http://хост:8081,http://localhost:3000
 ```
 
-
-
+---
 
 # <a id="title17">17. Описание файла .flake8</a> 
 ```angelscript
@@ -527,8 +513,7 @@ ignore = E203, W503
 exclude = .git, __pycache__, venv, .venv, */migrations/*,
 ```
 
-
-
+---
 
 # <a id="title18">18. Описание файла mypy.ini</a> 
 ```ini
@@ -551,8 +536,7 @@ django_settings_module = config.settings
 ignore_missing_imports = True
 ```
 
-
-
+---
 
 # <a id="title19">19. Описание файла .coveragerc</a> 
 ```ini
@@ -576,20 +560,18 @@ show_missing = True
 skip_covered = True
 ```
 
-
-
+---
 
 # <a id="title20">20. Документация к API</a> 
 1. ***Swagger UI*** по адресу: http://127.0.0.1:8000/swagger/
 2. ***Redoc*** по адресу: http://127.0.0.1:8000/redoc/
 
-
-
+---
 
 # <a id="title21">21. Установка проекта</a>
 1. Клонируйте репозиторий:
    ```
-   git clone https://github.com/MaksimLakovich/Coursework-5-Habits-tracker.git
+   git clone https://github.com/MaksimLakovich/Habits-tracker.git
    ```
 2. Установите зависимости:
    ```
@@ -597,15 +579,14 @@ skip_covered = True
    ```
 3. Заполните файл `.env` по примеру `.env.example`
 
-
-
+---
 
 # <a id="title22">22. Установка и запуск проекта на сервере (через Docker и Nginx)</a>
 
 1. Клонируйте репозиторий:
     ```commandline
-    git clone https://github.com/MaksimLakovich/Homework-5-python-DJANGO-REST-FRAMEWORK.git
-    cd Homework-5-python-DJANGO-REST-FRAMEWORK.git
+    git clone https://github.com/MaksimLakovich/Habits-tracker.git
+    cd Habits-tracker.git
     ```
 
 2. Создайте файл окружения ***.env.docker*** (на основе примера *.env.docker.example*) и заполните его реальными данными:
@@ -627,8 +608,7 @@ skip_covered = True
    
 5. После успешного запуска приложение будет доступно по IP-адресу вашей ВМ на порту 80: `http://<ваш-ip>`
 
-
-
+---
 
 # <a id="title23">23. Автоматический деплой через GitHub Actions</a> 
 
